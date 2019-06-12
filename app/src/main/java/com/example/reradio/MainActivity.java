@@ -14,6 +14,8 @@ import android.support.v7.app.ActionBar;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.onesignal.OneSignal;
+
 public class MainActivity extends AppCompatActivity {
     GridView simpleGrid;
     private ActionBar toolbar;
@@ -35,7 +37,12 @@ public class MainActivity extends AppCompatActivity {
         toolbar=getSupportActionBar();
         toolbar.setElevation(0);
 
-
+        // OneSignal Initialization
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+//
         setContentView(R.layout.activity_main);
         simpleGrid = findViewById(R.id.simpleGridView); // init GridView
         // Create an object of CustomAdapter and set Adapter to GirdView

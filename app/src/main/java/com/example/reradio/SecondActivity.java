@@ -139,13 +139,13 @@ public class SecondActivity extends AppCompatActivity {
 
         if ((Util.SDK_INT <= 23 || exoPlayer == null)) {
             prepareExoPlayerFromURL(Uri.parse(link_bundle));
-            isPlaying =false;
+            setPlayPause(true);
         }
     }
     @Override
     public void onPause() {
         super.onPause();
-        isPlaying =false;
+        setPlayPause(false);
     }
 
     @Override
