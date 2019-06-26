@@ -1,4 +1,4 @@
-package com.example.reradio;
+package com.creativenomads.reradio;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -35,11 +35,9 @@ import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.google.android.exoplayer2.util.Util;
 
-import java.io.File;
-
 public class SecondActivity extends AppCompatActivity {
 
-    private SimpleExoPlayer exoPlayer;
+    private ExoPlayer exoPlayer;
     private ExoPlayer.EventListener eventListener = new ExoPlayer.EventListener() {
         @Override
         public void onTimelineChanged(Timeline timeline, Object manifest) {
@@ -64,7 +62,7 @@ public class SecondActivity extends AppCompatActivity {
                 case ExoPlayer.STATE_ENDED:
                     Log.i(TAG,"Playback ended!");
                     //Stop playback and return to start position
-                    setPlayPause(false);
+                    setPlayPause(true);
 //                    exoPlayer.seekTo(0);
                     break;
                 case ExoPlayer.STATE_READY:
@@ -138,55 +136,26 @@ public class SecondActivity extends AppCompatActivity {
         super.onResume();
 
         if ((Util.SDK_INT <= 23 || exoPlayer == null)) {
-            prepareExoPlayerFromURL(Uri.parse(link_bundle));
-            setPlayPause(true);
+//            prepareExoPlayerFromURL(Uri.parse(link_bundle));
+//            setPlayPause(true);
         }
     }
     @Override
     public void onPause() {
         super.onPause();
-        setPlayPause(false);
+//        setPlayPause(false);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         if (Util.SDK_INT > 23) {
-            exoPlayer.release();
-            exoPlayer = null;
+//            exoPlayer.release();
+//            exoPlayer = null;
         }
     }
 
-//    //TODO
-//    private void prepareExoPlayerFromByteArray(byte[] data){
-//        exoPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector(null), new DefaultLoadControl());
-//        exoPlayer.addListener(eventListener);
-//
-//        final MByteArrayDataSource byteArrayDataSource = new MByteArrayDataSource(data);
-//        Log.i(TAG,"ByteArrayDataSource constructed.");
-//        /*
-//        DataSpec dataSpec = new DataSpec(byteArrayDataSource.getUri());
-//        try {
-//            byteArrayDataSource.open(dataSpec);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        */
-//
-//        DataSource.Factory factory = new DataSource.Factory() {
-//            @Override
-//            public DataSource createDataSource() {
-//                return byteArrayDataSource;
-//            }
-//        };
-//        Log.i(TAG,"DataSource.Factory constructed.");
-//
-//        MediaSource audioSource = new ExtractorMediaSource(byteArrayDataSource.getUri(),
-//                factory, new DefaultExtractorsFactory(),null,null);
-//        Log.i(TAG,"Audio source constructed.");
-//        exoPlayer.prepare(audioSource);
-//        initMediaControls();
-//    }
+
 
     /**
      * Prepares exoplayer for audio playback from a local file
@@ -214,7 +183,15 @@ public class SecondActivity extends AppCompatActivity {
                 factory, new DefaultExtractorsFactory(), null, null);
 
         exoPlayer.prepare(audioSource);
+
+
+        final Holder globalVariable = (Holder) getApplicationContext();
+        globalVariable.setExoPlayer(exoPlayer);
+
+
         initMediaControls();
+
+
     }
 
 
@@ -237,7 +214,11 @@ public class SecondActivity extends AppCompatActivity {
         exoPlayer.addListener(eventListener);
 
         exoPlayer.prepare(audioSource);
+        final Holder globalVariable = (Holder) getApplicationContext();
+        globalVariable.setExoPlayer(exoPlayer);
+
         initMediaControls();
+        setPlayPause(true);
     }
 
     private void prepareExoPlayerFromRawResourceUri(Uri uri){

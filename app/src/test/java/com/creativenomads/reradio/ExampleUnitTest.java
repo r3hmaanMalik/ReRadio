@@ -1,4 +1,4 @@
-package com.example.reradio;
+package com.creativenomads.reradio;
 
 import org.junit.Test;
 

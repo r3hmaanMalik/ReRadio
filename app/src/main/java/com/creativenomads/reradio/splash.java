@@ -1,4 +1,4 @@
-package com.example.reradio;
+package com.creativenomads.reradio;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
