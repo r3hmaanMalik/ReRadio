@@ -18,21 +18,18 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.FileDataSource;
-import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 public class SecondActivity extends AppCompatActivity {
@@ -47,6 +44,18 @@ public class SecondActivity extends AppCompatActivity {
         @Override
         public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
             Log.i(TAG,"onTracksChanged");
+                for (int i = 0; i < trackGroups.length; i++) {
+                    TrackGroup trackGroup = trackGroups.get(i);
+                    for (int j = 0; j < trackGroup.length; j++) {
+                        Metadata trackMetadata = trackGroup.getFormat(j).metadata;
+                        if (trackMetadata != null) {
+                            Log.i(TAG,"onTracksChanged  we found metadata");
+                        }
+                    }
+                }
+
+
+
         }
 
         @Override
@@ -100,6 +109,8 @@ public class SecondActivity extends AppCompatActivity {
     ImageView selectedImage;
     TextView tv;
     String link_bundle = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,8 +137,11 @@ public class SecondActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        if ((Util.SDK_INT <= 23 || exoPlayer == null)) {
+        if ((Util.SDK_INT <= 21 || exoPlayer == null)) {
             prepareExoPlayerFromURL(Uri.parse(link_bundle));
+                Intent intent = new Intent(SecondActivity.this, MyService.class);
+                intent.setAction(MyService.ACTION_START_FOREGROUND_SERVICE);
+                startService(intent);
         }
     }
 
@@ -149,6 +163,7 @@ public class SecondActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+
         if (Util.SDK_INT > 23) {
 //            exoPlayer.release();
 //            exoPlayer = null;
@@ -158,48 +173,11 @@ public class SecondActivity extends AppCompatActivity {
 
 
     /**
-     * Prepares exoplayer for audio playback from a local file
-     * @param uri
-     */
-    private void prepareExoPlayerFromFileUri(Uri uri){
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector(null), new DefaultLoadControl());
-        exoPlayer.addListener(eventListener);
-
-        DataSpec dataSpec = new DataSpec(uri);
-        final FileDataSource fileDataSource = new FileDataSource();
-        try {
-            fileDataSource.open(dataSpec);
-        } catch (FileDataSource.FileDataSourceException e) {
-            e.printStackTrace();
-        }
-
-        DataSource.Factory factory = new DataSource.Factory() {
-            @Override
-            public DataSource createDataSource() {
-                return fileDataSource;
-            }
-        };
-        MediaSource audioSource = new ExtractorMediaSource(fileDataSource.getUri(),
-                factory, new DefaultExtractorsFactory(), null, null);
-
-        exoPlayer.prepare(audioSource);
-
-
-        final Holder globalVariable = (Holder) getApplicationContext();
-        globalVariable.setExoPlayer(exoPlayer);
-
-
-        initMediaControls();
-
-
-    }
-
-
-    /**
      * Prepares exoplayer for audio playback from a remote URL audiofile. Should work with most
      * popular audiofile types (.mp3, .m4a,...)
      * @param uri Provide a Uri in a form of Uri.parse("http://blabla.bleble.com/blublu.mp3)
      */
+
     private void prepareExoPlayerFromURL(Uri uri){
 
         TrackSelector trackSelector = new DefaultTrackSelector();
@@ -217,40 +195,17 @@ public class SecondActivity extends AppCompatActivity {
         final Holder globalVariable = (Holder) getApplicationContext();
         globalVariable.setExoPlayer(exoPlayer);
 
+        Intent intent2 = new Intent(SecondActivity.this, MyService.class);
+        intent2.setAction(MyService.ACTION_START_FOREGROUND_SERVICE);
+        startService(intent2);
+
+
         initMediaControls();
         setPlayPause(true);
     }
 
-    private void prepareExoPlayerFromRawResourceUri(Uri uri){
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector(null), new DefaultLoadControl());
-        exoPlayer.addListener(eventListener);
-
-        DataSpec dataSpec = new DataSpec(uri);
-        final RawResourceDataSource rawResourceDataSource = new RawResourceDataSource(this);
-        try {
-            rawResourceDataSource.open(dataSpec);
-        } catch (RawResourceDataSource.RawResourceDataSourceException e) {
-            e.printStackTrace();
-        }
-
-        DataSource.Factory factory = new DataSource.Factory() {
-            @Override
-            public DataSource createDataSource() {
-                return rawResourceDataSource;
-            }
-        };
-
-        MediaSource audioSource = new ExtractorMediaSource(rawResourceDataSource.getUri(),
-                factory, new DefaultExtractorsFactory(), null, null);
-
-        exoPlayer.prepare(audioSource);
-        initMediaControls();
-    }
-
     private void initMediaControls() {
         initPlayButton();
-//        initSeekBar();
-//        initTxtTime();
     }
 
     private void initPlayButton() {

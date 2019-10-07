@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.creativenomads.reradio">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -12,22 +14,27 @@
         android:icon="@mipmap/ic_launcher_app"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
-        <activity android:name="com.creativenomads.reradio.MainActivity"/>
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <service
+            android:name="com.creativenomads.reradio.MyService"
+            android:enabled="true"
+            android:stopWithTask="true"
+            android:exported="true"></service>
 
+        <activity android:name="com.creativenomads.reradio.MainActivity" />
         <activity
             android:name="com.creativenomads.reradio.SecondActivity"
-            android:theme="@style/second"></activity>
-
-        <activity android:name="com.creativenomads.reradio.splash" android:theme="@style/SplashScreenTheme">
+            android:screenOrientation="portrait"
+            android:theme="@style/second" />
+        <activity
+            android:name="com.creativenomads.reradio.splash"
+            android:theme="@style/SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

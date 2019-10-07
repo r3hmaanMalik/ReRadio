@@ -13,31 +13,32 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.util.Util;
 import com.onesignal.OneSignal;
 
 public class MainActivity extends AppCompatActivity {
     GridView simpleGrid;
     private ExoPlayer exoPlayer;
     private ActionBar toolbar;
-    int logos[] = {R.mipmap.c1,R.mipmap.c2, R.mipmap.c3, R.mipmap.c4,
-            R.mipmap.c5, R.mipmap.c6,R.mipmap.c7,R.mipmap.c8};
+    int logos[] = {R.mipmap.c2, R.mipmap.c4,
+            R.mipmap.c5, R.mipmap.c6,R.mipmap.c7,R.mipmap.c8,R.mipmap.c3,};
     String names[] = {
-            "Chicago Bob’s Blues",
+
             "Bulldog Country",
-            "Rampage",
             "The Vintage Lounge",
             "RDP","Spit Wyre",
             "All Local Station",
-            "Music Box"};
+            "Music Box",
+            "Vet’s Rock And Roll-A-Billy Blues"};
 
-    String links[] = {"http://17483.live.streamtheworld.com/SP_R2651227_SC",
+    String links[] = {
             "http://14833.live.streamtheworld.com/SAM03AAC105_SC",
-            "http://17003.live.streamtheworld.com/SP_R2645109_SC",
             "http://17483.live.streamtheworld.com/SP_R2645155_SC",
             "http://17003.live.streamtheworld.com/SP_R2691875_SC",
             "http://14553.live.streamtheworld.com/SP_R2808508_SC",
             "http://13683.live.streamtheworld.com/SP_R2645192_SC",
-            "http://17003.live.streamtheworld.com/SP_R2645173_SC"};
+            "http://17003.live.streamtheworld.com/SP_R2645173_SC",
+            "http://17483.live.streamtheworld.com/SP_R2651227_SC"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +81,10 @@ public class MainActivity extends AppCompatActivity {
                         exoPlayer.release();
                         exoPlayer = null;
 
+                        Intent intent2 = new Intent(MainActivity.this, MyService.class);
+                        intent2.setAction(MyService.ACTION_STOP_FOREGROUND_SERVICE);
+                        startService(intent2);
+
                         startActivity(intent); // start Intent
 
 
@@ -89,6 +94,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        Intent intent = new Intent(MainActivity.this, MyService.class);
+//        intent.setAction(MyService.ACTION_STOP_FOREGROUND_SERVICE);
+//        startService(intent);
+
+    }
+
     public void setTitle(String title){
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
